@@ -5,7 +5,7 @@ from rest_framework import serializers
 
 
 class UserSerializer(serializers.ModelSerializer):
-    """Serializer for the users object""" 
+    """Serializer for the users object"""
 
     class Meta:
         model = get_user_model()
@@ -26,6 +26,7 @@ class UserSerializer(serializers.ModelSerializer):
             user.save()
 
         return user
+
 
 class AuthTokenSerializer(serializers.Serializer):
     """Serializer for the user suthentication object"""

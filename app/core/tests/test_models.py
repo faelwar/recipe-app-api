@@ -4,9 +4,11 @@ from django.contrib.auth import get_user_model
 
 from core import models
 
+
 def sample_user(email="test@faelwar.com", password="@Galo2113"):
     """Create a sample user"""
     return get_user_model().objects.create_user(email, password)
+
 
 class ModelTests(TestCase):
 
@@ -30,7 +32,7 @@ class ModelTests(TestCase):
         self.assertEqual(user.email, email.lower())
 
     def test_new_user_invalid_email(self):
-        """Test creating user with no email raises error""" 
+        """Test creating user with no email raises error"""
 
         with self.assertRaises(ValueError):
             get_user_model().objects.create_user(None, 'test')
@@ -53,7 +55,7 @@ class ModelTests(TestCase):
         )
 
         self.assertEqual(str(tag), tag.name)
-        
+
     def test_ingredient_str(self):
         """Test the ingredient string representation"""
         ingredient = models.Ingredient.objects.create(

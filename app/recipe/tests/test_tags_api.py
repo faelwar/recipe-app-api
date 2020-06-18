@@ -74,7 +74,7 @@ class PrivateTagsApiTests(TestCase):
             name=payload['name']
         ).exists()
         self.assertTrue(exists)
-    
+
     def test_create_tag_invalid(self):
         """Test creating a new tag with invalid payload"""
         payload = {'name': ''}
@@ -123,4 +123,4 @@ class PrivateTagsApiTests(TestCase):
 
         res = self.client.get(TAGS_URL, {'assigned_only': 1})
 
-        self.assertEqual(len(res.data),1)
+        self.assertEqual(len(res.data), 1)

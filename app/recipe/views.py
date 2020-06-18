@@ -15,7 +15,7 @@ class BaseRecipeAttrViewSet(viewsets.GenericViewSet,
     """Base viewset for user owned recipe attributes"""
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated, )
-    
+
     def get_queryset(self):
         """Return objects for the current authenticated user only"""
         assigned_only = bool(
@@ -24,7 +24,9 @@ class BaseRecipeAttrViewSet(viewsets.GenericViewSet,
         queryset = self.queryset
         if assigned_only:
             queryset = queryset.filter(recipe__isnull=False)
-        return queryset.filter(user=self.request.user).order_by('-name').distinct()
+        return queryset.filter(
+            user=self.request.user
+        ).order_by('-name').distinct()
 
     def perform_create(self, serializer):
         """Create a new tag"""
@@ -41,6 +43,7 @@ class IngredientViewSet(BaseRecipeAttrViewSet):
     """Manage ingredient in the database"""
     queryset = Ingredient.objects.all()
     serializer_class = serializers.IngredientSerializer
+
 
 class RecipeViewSet(viewsets.ModelViewSet):
     """Manage Recipe in the database"""
@@ -63,9 +66,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if ingredients:
             ingredients_ids = self._params_to_ints(ingredients)
             queryset = queryset.filter(ingredients__id__in=ingredients_ids)
-        
+
         return queryset.filter(user=self.request.user)
-    
+
     def get_serializer_class(self):
         """Return appropriate serializer class"""
         if self.action == 'retrieve':
@@ -73,11 +76,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
         elif self.action == 'upload_image':
             return serializers.RecipeImageSerializer
         return self.serializer_class
-    
+
     def perform_create(self, serializer):
         """Create a new recipe"""
         serializer.save(user=self.request.user)
-    
+
     @action(methods=['POST'], detail=True, url_path='upload-image')
     def upload_image(self, request, pk=None):
         """Upload an image to a recipe"""
@@ -93,7 +96,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 serializer.data,
                 status=status.HTTP_200_OK
             )
-        
+
         return Response(
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST

@@ -22,13 +22,16 @@ def image_upload_url(recipe_id):
     """Return URL for recipe image upload"""
     return reverse('recipe:recipe-upload-image', args=[recipe_id])
 
+
 def detail_url(recipe_id):
     """Return recipe detail url"""
     return reverse('recipe:recipe-detail', args=[recipe_id])
 
+
 def sample_tag(user, name='Main course'):
     """Create and return a smaple tag"""
     return Tag.objects.create(user=user, name=name)
+
 
 def sample_ingredient(user, name='Cinnamon'):
     """Create and return a sample ingredient"""
@@ -75,7 +78,7 @@ class PrivateTagsApiTests(TestCase):
         """Test retrieving recipes"""
         sample_recipe(user=self.user)
         sample_recipe(user=self.user)
-        
+
         res = self.client.get(RECIPES_URL)
 
         recipes = Recipe.objects.all().order_by('-id')
@@ -91,7 +94,7 @@ class PrivateTagsApiTests(TestCase):
         )
         sample_recipe(user=user2)
         sample_recipe(user=self.user)
-        
+
         res = self.client.get(RECIPES_URL)
 
         recipes = Recipe.objects.filter(user=self.user)
@@ -126,7 +129,7 @@ class PrivateTagsApiTests(TestCase):
         recipe = Recipe.objects.get(id=res.data['id'])
         for key in payload.keys():
             self.assertEqual(payload[key], getattr(recipe, key))
-    
+
     def test_create_recipe_with_tag(self):
         """Test creating a recipe with tags"""
         tag1 = sample_tag(user=self.user, name='Vegan')
@@ -141,7 +144,7 @@ class PrivateTagsApiTests(TestCase):
         res = self.client.post(RECIPES_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
-        recipe = Recipe.objects.get(id = res.data['id'])
+        recipe = Recipe.objects.get(id=res.data['id'])
         tags = recipe.tags.all()
         self.assertEqual(tags.count(), 2)
         self.assertIn(tag1, tags)
@@ -161,7 +164,7 @@ class PrivateTagsApiTests(TestCase):
         res = self.client.post(RECIPES_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
-        recipe = Recipe.objects.get(id = res.data['id'])
+        recipe = Recipe.objects.get(id=res.data['id'])
         ingredients = recipe.ingredients.all()
         self.assertEqual(ingredients.count(), 2)
         self.assertIn(ingredient1, ingredients)
@@ -191,7 +194,7 @@ class PrivateTagsApiTests(TestCase):
         """Test updating a recipe with put"""
         recipe = sample_recipe(user=self.user)
         recipe.tags.add(sample_tag(user=self.user))
-        
+
         payload = {
             'title': 'Spaghetti carbonara',
             'time_minutes': 25,
@@ -212,14 +215,14 @@ class PrivateTagsApiTests(TestCase):
 class RecipeImageUploadTests(TestCase):
 
     def setUp(self):
-        self.client = APIClient();
+        self.client = APIClient()
         self.user = get_user_model().objects.create_user(
             'user@faelwar.com',
             '@Galo2113'
         )
         self.client.force_authenticate(self.user)
         self.recipe = sample_recipe(user=self.user)
-    
+
     def tearDown(self):
         self.recipe.image.delete()
 
@@ -274,7 +277,9 @@ class RecipeImageUploadTests(TestCase):
         recipe2.ingredients.add(ingredient2)
         recipe3 = sample_recipe(user=self.user, title='Steak and Mushrooms')
 
-        res = self.client.get(RECIPES_URL, {'ingredients': f'{ingredient1.id},{ingredient2.id}'})
+        res = self.client.get(RECIPES_URL, {
+            'ingredients': f'{ingredient1.id},{ingredient2.id}'
+        })
 
         serializer1 = RecipeSerializer(recipe1)
         serializer2 = RecipeSerializer(recipe2)
